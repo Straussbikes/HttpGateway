@@ -9,6 +9,15 @@ public class TCPCon {
     private Socket socket;
     private InputStream in;
     private OutputStream out;
+    public String ficheiro;
+
+    public String getFicheiro() {
+        return ficheiro;
+    }
+
+    public void setFicheiro(String ficheiro) {
+        this.ficheiro = ficheiro;
+    }
 
     public TCPCon(Socket socket) throws IOException {
         this.socket = socket;

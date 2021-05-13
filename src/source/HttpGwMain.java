@@ -26,7 +26,9 @@ public class HttpGwMain {
                 try {
                     System.out.println("Waiting for connection on port " + Constantes.TCPPort);
                     Socket sockets = server.accept();
+                    TCPCon tcp = new TCPCon(sockets);
                     main_server.setServerSocket(sockets);
+                    main_server.setTCP(tcp);
                     main_server.start();
 
                     // Print de aviso

@@ -10,6 +10,7 @@ public class HTTPGw extends Thread {
     DatagramSocket socket;
     Socket serverSocket;
     boolean running;
+    TCPCon tcpc;
     int servers_conectados;
 
     public HTTPGw(String ip) throws IOException {
@@ -42,6 +43,9 @@ public class HTTPGw extends Thread {
     public void incServers() {
         ++this.servers_conectados;
     }
+    public void setTCP(TCPCon tcp){
+        this.tcpc=tcp;
+    }
 
     public void setServerSocket(Socket serverSocket) {
         this.serverSocket = serverSocket;
@@ -53,11 +57,15 @@ public class HTTPGw extends Thread {
 
     public void run() {
         try {
-            Tcplistener tcp = new Tcplistener(this.serverSocket);
+            Tcplistener tcp = new Tcplistener(this.serverSocket,tcpc);
             tcp.start();
+            System.out.println("dar upload a 2: "+ tcp.getFicheiro());
         } catch (Exception var2) {
             var2.printStackTrace();
         }
 
+    }
+    public String getf(){
+        return tcpc.getFicheiro();
     }
 }

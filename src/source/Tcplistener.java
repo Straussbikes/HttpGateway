@@ -8,19 +8,22 @@ import java.util.StringTokenizer;
 public class Tcplistener extends Thread {
     public Socket socket;
     static String docroot = ".";
-    public String ficheiro;
     public TCPCon tcp;
+    public String ficheiro;
 
-    public Tcplistener(Socket s) {
+    public Tcplistener(Socket s, TCPCon tcpc) {
         this.socket = s;
+        this.tcp = tcpc;
     }
+
 
     public void run() {
         try {
-            PrintStream os = new PrintStream(this.socket.getOutputStream());
-            BufferedReader is = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+
+            PrintStream os = new PrintStream(tcp.getOut());
+            BufferedReader is = new BufferedReader(new InputStreamReader(tcp.getIn()));
             String get = is.readLine();
-            System.out.println(get.toString());
+
             StringTokenizer st = new StringTokenizer(get);
             String method = st.nextToken();
             if (!method.equals("GET")) {
@@ -30,13 +33,15 @@ public class Tcplistener extends Thread {
                 }
 
                 String file = st.nextToken();
-                System.out.println(file);
+               setFicheiro(file.substring(1));
+
+
                 if (file.charAt(0) != '/') {
                     System.err.println("Exiting: Request filename must start with \"/\"");
                 } else if (file.indexOf("../") != -1) {
                     System.err.println("Exiting: \"../\" in filename not allowed");
                 } else {
-                    this.ficheiro = file.substring(1);
+
                     this.sendFile(os, file);
                     this.socket.close();
                 }
@@ -57,6 +62,7 @@ public class Tcplistener extends Thread {
             os.write("HTTP/1.1 200 OK\r\n".getBytes());
             os.write("Accept-Ranges: bytes\r\n".getBytes());
             os.write(("Content-Length: " + theData.length + "\r\n").getBytes());
+            //content type variation need !!!
             os.write("Content-Type: text/plain; charset=utf-8\r\n".getBytes());
             os.write(("Content-Disposition: attachment; filename=" + file.substring(1)).getBytes());
             os.write(("Content-Length:" + theData.length + "\r\n").getBytes());
@@ -99,5 +105,21 @@ public class Tcplistener extends Thread {
         }
 
         return bArray;
+    }
+
+    public TCPCon getTcp() {
+        return tcp;
+    }
+
+    public void setTcp(TCPCon tcp) {
+        this.tcp = tcp;
+    }
+
+    public String getFicheiro() {
+        return ficheiro;
+    }
+
+    public void setFicheiro(String ficheiro) {
+        this.ficheiro = ficheiro;
     }
 }
