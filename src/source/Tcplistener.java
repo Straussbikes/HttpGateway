@@ -9,6 +9,7 @@ public class Tcplistener extends Thread {
     public Socket socket;
     static String docroot = ".";
     public String ficheiro;
+    public TCPCon tcp;
 
     public Tcplistener(Socket s) {
         this.socket = s;
