@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class HTTPGw extends Thread {
     String ip;
-    DatagramSocket socket;
+    DatagramSocket dataSocket;
     Socket serverSocket;
     boolean running;
     TCPCon tcpc;
@@ -15,7 +15,7 @@ public class HTTPGw extends Thread {
 
     public HTTPGw(String ip) throws IOException {
         this.ip = ip;
-        this.socket = new DatagramSocket(80);
+        this.dataSocket = new DatagramSocket(80);
         this.running = true;
         this.servers_conectados = 0;
     }
@@ -24,8 +24,8 @@ public class HTTPGw extends Thread {
         return this.ip;
     }
 
-    public DatagramSocket getSocket() {
-        return this.socket;
+    public DatagramSocket getDatagramSocket() {
+        return this.dataSocket;
     }
 
     public Socket getServerSocket() {
@@ -40,17 +40,25 @@ public class HTTPGw extends Thread {
         return this.running;
     }
 
-    public void incServers() {
-        ++this.servers_conectados;
-    }
-    public void setTCP(TCPCon tcp){
-        this.tcpc=tcp;
-    }
-
+    //SETS
     public void setServerSocket(Socket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
+    public void setTCP(TCPCon tcp){
+        this.tcpc=tcp;
+    }
+
+    public void setDataSocket(DatagramSocket ds){
+        this.dataSocket = ds;
+    }
+
+    // Incrementa Servidores Conectados
+    public void incServers() {
+        ++this.servers_conectados;
+    }
+
+    // Desliga servidor
     public void ServerShutdown() {
         this.running = false;
     }
@@ -59,6 +67,10 @@ public class HTTPGw extends Thread {
         try {
             Tcplistener tcp = new Tcplistener(this.serverSocket,tcpc);
             tcp.start();
+
+            UDPWorker udp = new UDPWorker(this.dataSocket);
+            udp.start();
+
             System.out.println("dar upload a 2: "+ tcp.getFicheiro());
         } catch (Exception var2) {
             var2.printStackTrace();

@@ -2,6 +2,7 @@ package source;
 
 import com.sun.net.httpserver.HttpServer;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.net.*;
 
@@ -18,25 +19,39 @@ public class HttpGwMain {
             // Ip da maquina
             InetAddress ip = InetAddress.getLocalHost();
             String hostAdress = ip.getHostAddress();
+
+            // Socket TCP
             ServerSocket server = new ServerSocket(Constantes.TCPPort);
+
+            // Socket UDP
+            DatagramSocket dServer = new DatagramSocket(Constantes.UDPPort);
+
+            // Main Server
             HTTPGw main_server = new HTTPGw(ip.toString());
 
             // Rodar server
             while(true) {
                 try {
                     System.out.println("Waiting for connection on port " + Constantes.TCPPort);
+
+                    //TCP
                     Socket sockets = server.accept();
                     TCPCon tcp = new TCPCon(sockets);
                     main_server.setServerSocket(sockets);
                     main_server.setTCP(tcp);
+
+                    //UDP
+                    main_server.setDataSocket(dServer);
+
+                    // Start do server
                     main_server.start();
 
                     // Print de aviso
                     System.out.println("Ativo em " + main_server.getIp() + " porta " + Constantes.UDPPort);
                 }
-            catch(IOException e) {
-                System.err.println("Cannot accept connection");
-            }
+                catch(IOException e) {
+                    System.err.println("Cannot accept connection");
+                }
             }
         }
 
