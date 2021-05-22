@@ -11,6 +11,9 @@ public class TCPCon {
     private OutputStream out;
     public String ficheiro;
 
+    public TCPCon (){
+
+    }
     public String getFicheiro() {
         return ficheiro;
     }

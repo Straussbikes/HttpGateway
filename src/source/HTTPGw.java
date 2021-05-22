@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class HTTPGw extends Thread {
     InetAddress ip;
@@ -13,12 +15,34 @@ public class HTTPGw extends Thread {
     boolean running;
     TCPCon tcpc;
     int servers_conectados;
+    public Queue<FastFileSrv> poolServer;
+    public byte[] sending = new byte[100000];
 
-    public HTTPGw(InetAddress ip) throws IOException {
-        this.ip = ip;
-        this.dataSocket = new DatagramSocket(Constantes.UDPPort);
+    public HTTPGw() {
         this.running = true;
         this.servers_conectados = 0;
+        this.poolServer = new LinkedList<>();
+    }
+
+    public void setIp(InetAddress ip) {
+        this.ip = ip;
+    }
+
+
+    public HTTPGw(InetAddress ip, DatagramSocket data) throws IOException {
+        this.ip = ip;
+        this.dataSocket = data;
+        this.running = true;
+        this.servers_conectados = 0;
+        this.poolServer = new LinkedList<>();
+    }
+
+    public Queue<FastFileSrv> getPoolServer() {
+        return poolServer;
+    }
+
+    public void setPoolServer(Queue<FastFileSrv> poolServer) {
+        this.poolServer = poolServer;
     }
 
     public InetAddress getIp() {
@@ -68,14 +92,18 @@ public class HTTPGw extends Thread {
         try {
             Tcplistener tcp = new Tcplistener(this.serverSocket, tcpc);
             tcp.start();
-
-            UDPWorker udp = new UDPWorker(this.dataSocket);
+            System.out.println("dar upload a 2: "+ getf());
+            System.out.println(poolServer.size());
+               FastFileSrv ffs = poolServer.remove();
+               incServers();
+            UDPWorker udp = new UDPWorker(tcp.getFicheiro(),ffs.getIpAdress(),dataSocket);
             udp.start();
-
-            System.out.println("dar upload a 2: "+ tcp.getFicheiro());
+            sending= udp.getSending();
+            tcp.setSending(sending);
 
         } catch (Exception var2) {
             var2.printStackTrace();
+            ServerShutdown();
         }
 
     }

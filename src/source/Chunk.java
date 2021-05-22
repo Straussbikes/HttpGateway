@@ -18,7 +18,7 @@ public class Chunk {
     private byte[] data;
 
     // Construtor
-    public Chunk(int id, int numSequence, boolean isLastPacket, int destino, byte[] data) {
+    public Chunk(int id, int numSequence, boolean isLastPacket, byte[] data) {
         this.id = id;
         this.isLastPacket = isLastPacket;
         this.numSequence = numSequence;

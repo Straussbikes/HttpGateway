@@ -10,12 +10,19 @@ public class Tcplistener extends Thread {
     static String docroot = ".";
     public TCPCon tcp;
     public String ficheiro;
-
+    public byte[] sending = new byte[100000];
     public Tcplistener(Socket s, TCPCon tcpc) {
         this.socket = s;
         this.tcp = tcpc;
     }
 
+    public byte[] getSending() {
+        return sending;
+    }
+
+    public void setSending(byte[] sending) {
+        this.sending = sending;
+    }
 
     public void run() {
         try {
@@ -42,29 +49,30 @@ public class Tcplistener extends Thread {
                     System.err.println("Exiting: \"../\" in filename not allowed");
                 } else {
 
-                    this.sendFile(os, file);
+                    this.sendFile(os, sending);
+                    System.out.println(sending.length);
                     this.socket.close();
                 }
             }
         } catch (IOException var7) {
             System.err.println("Cannot accept connection");
         }
+
     }
 
-    void sendFile(PrintStream os, String file) {
-        System.err.println("Request for file \"" + docroot + file + "\"");
+    void sendFile(PrintStream os, byte[] theData) {
+       // System.err.println("Request for file \"" + docroot + file + "\"");
 
         try {
-            System.out.println(file.substring(1));
-            java.io.File files = new java.io.File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\" + file.substring(1));
-            byte[] theData = readFile(files);
             System.out.println(theData.length);
+            System.out.println(ficheiro);
             os.write("HTTP/1.1 200 OK\r\n".getBytes());
             os.write("Accept-Ranges: bytes\r\n".getBytes());
             os.write(("Content-Length: " + theData.length + "\r\n").getBytes());
             //content type variation need !!!
             os.write("Content-Type: text/plain; charset=utf-8\r\n".getBytes());
-            os.write(("Content-Disposition: attachment; filename=" + file.substring(1)).getBytes());
+            os.write(("Content-Disposition: attachment; filename=" + ficheiro).getBytes());
+
             os.write(("Content-Length:" + theData.length + "\r\n").getBytes());
             os.write("\r\n".getBytes());
             os.write("\r\n".getBytes());
@@ -77,35 +85,13 @@ public class Tcplistener extends Thread {
             os.print("Content-type: text/html\r\n");
             os.print("\r\n");
             os.print("<h1>Not found</h1>\n");
-            os.print("<p>File \"" + file + "\" not found</p>\n");
+            os.print("<p>File \"" + ficheiro + "\" not found</p>\n");
             os.print("<p><em>TP2CC/1.0</em></p>\n");
         }
 
     }
 
-    private static byte[] readFile(File file) {
-        FileInputStream fis = null;
-        byte[] bArray = new byte[(int)file.length()];
 
-        try {
-            fis = new FileInputStream(file);
-            fis.read(bArray);
-            fis.close();
-        } catch (IOException var12) {
-            var12.printStackTrace();
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException var11) {
-                    var11.printStackTrace();
-                }
-            }
-
-        }
-
-        return bArray;
-    }
 
     public TCPCon getTcp() {
         return tcp;

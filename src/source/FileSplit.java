@@ -57,9 +57,25 @@ class FileSplit {
         return Arrays.asList(files);
     }
 
+
+    public static byte[] serialize(Object obj) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(obj);
+        return out.toByteArray();
+    }
+    public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        ObjectInputStream is = new ObjectInputStream(in);
+        return is.readObject();
+    }
+
+
+
     public static void main(String[] args) throws IOException {
-        splitFile(new File("C:\\Users\\latot\\Desktop\\CC Teste\\teste.mp4"));
-        List<File> files = listOfFilesToMerge(new File ("C:\\Users\\latot\\Desktop\\CC Teste\\teste.mp4.001"));
-        mergeFiles(files, new File("C:\\Users\\latot\\Desktop\\CC Teste\\output\\teste.mp4"));
+        splitFile(new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\test.mp4"));
+        List<File> files = listOfFilesToMerge(new File ("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\test.mp4.001"));
+        System.out.println(files);
+     //   mergeFiles(files, new File("C:\\Users\\latot\\Desktop\\CC Teste\\output\\teste.mp4"));
     }
 }
