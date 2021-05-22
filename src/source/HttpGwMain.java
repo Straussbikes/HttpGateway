@@ -18,7 +18,6 @@ public class HttpGwMain {
         else if(args[0].equals("HTTPGw")) {
             // Ip da maquina
             InetAddress ip = InetAddress.getLocalHost();
-            String hostAdress = ip.getHostAddress();
 
             // Socket TCP
             ServerSocket server = new ServerSocket(Constantes.TCPPort);
@@ -27,7 +26,7 @@ public class HttpGwMain {
             DatagramSocket dServer = new DatagramSocket(Constantes.UDPPort);
 
             // Main Server
-            HTTPGw main_server = new HTTPGw(ip.toString());
+            HTTPGw main_server = new HTTPGw(ip);
 
             // Rodar server
             while(true) {
@@ -61,6 +60,7 @@ public class HttpGwMain {
             //Ver se args[1] e um IP e ver se args[2] é uma port valida
             if(args[1].matches(Constantes.IPV4Pattern) && args[2].matches(Constantes.PortPattern)) {
                 FastFileSrv ffs = new FastFileSrv(args[1], args[2]);
+                ffs.start();
             }
             else System.out.println("Parametros Invalidos!");
         }

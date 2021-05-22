@@ -1,49 +1,60 @@
 package source;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 // TODO falta definir conexão UDP com o HTTPGW
 
-public class FastFileSrv implements Runnable {
+public class FastFileSrv extends Thread {
     // Target IP
     private InetAddress ipAdress;
 
     // Target port
     private DatagramSocket socket;
 
-    // Buffer
-    private byte[] buf;
+    // Server status
+    private boolean running = false;
 
-    public FastFileSrv(String ip) throws SocketException {
-        this.ipAdress = ;
-        this.socket = new DatagramSocket();
+    // Buffer
+    private byte[] buf = new byte[1024*1024];
+
+    public FastFileSrv(String ip, String port) throws SocketException, UnknownHostException {
+        this.ipAdress = InetAddress.getByName(ip);
+        this.socket = new DatagramSocket(Integer.parseInt(port), ipAdress);
     }
 
     @Override
     public void run() {
+        // Tem socket ligada ao server
+        this.running = true;
 
-        DatagramPacket packet = new DatagramPacket(, address, 4445);
+        while(running) {
+            // Packet
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
 
-        try {
-            socket.send(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
+            // Fica a escuta de pedidos
+            try {
+                socket.receive(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // Processa informação do pedido
+            // Pega no file
+            // Dá split do file
+
+            // Envia os respetivos chunks
+                // Pseudo-codigo
+            while (lista de chunks != null){
+                if (Lista de chunks numero == chunk.getSequenceNum()){
+                    try {
+                        socket.send(packet);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
-
-        packet = new DatagramPacket();
-
-        try {
-            socket.receive(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String received;
-
-        return received;
     }
 
     public void close(){

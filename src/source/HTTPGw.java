@@ -3,24 +3,25 @@ package source;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class HTTPGw extends Thread {
-    String ip;
+    InetAddress ip;
     DatagramSocket dataSocket;
     Socket serverSocket;
     boolean running;
     TCPCon tcpc;
     int servers_conectados;
 
-    public HTTPGw(String ip) throws IOException {
+    public HTTPGw(InetAddress ip) throws IOException {
         this.ip = ip;
-        this.dataSocket = new DatagramSocket(80);
+        this.dataSocket = new DatagramSocket(Constantes.UDPPort);
         this.running = true;
         this.servers_conectados = 0;
     }
 
-    public String getIp() {
+    public InetAddress getIp() {
         return this.ip;
     }
 
@@ -65,13 +66,14 @@ public class HTTPGw extends Thread {
 
     public void run() {
         try {
-            Tcplistener tcp = new Tcplistener(this.serverSocket,tcpc);
+            Tcplistener tcp = new Tcplistener(this.serverSocket, tcpc);
             tcp.start();
 
             UDPWorker udp = new UDPWorker(this.dataSocket);
             udp.start();
 
             System.out.println("dar upload a 2: "+ tcp.getFicheiro());
+
         } catch (Exception var2) {
             var2.printStackTrace();
         }

@@ -4,17 +4,18 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class File {
-    private int numSequence = 0;
+    private String name;
     private boolean isComplete = false;
     private Queue<Chunk> chunks = new LinkedList();
 
     public File() {
+        this.chunks = new LinkedList<>();
+        this.isComplete = false;
     }
 
     public void addChunkQueue(Chunk chunk) {
-        if (!this.isComplete) {
+        if (!this.isComplete && chunk != null) {
             this.chunks.add(chunk);
-            ++this.numSequence;
             if (chunk.isLast()) {
                 this.isComplete = true;
             }

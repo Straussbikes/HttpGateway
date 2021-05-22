@@ -33,7 +33,7 @@ public class Tcplistener extends Thread {
                 }
 
                 String file = st.nextToken();
-               setFicheiro(file.substring(1));
+                setFicheiro(file.substring(1));
 
 
                 if (file.charAt(0) != '/') {

@@ -21,7 +21,7 @@ public class UDPWorker extends Thread{
             // Packet
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
 
-            // Packet a transmitir
+            // Packet a transmitir -> INFO DO FILE A TRANSMITIR
             try {
                 ds.receive(packet);
             } catch (IOException e) {
@@ -32,6 +32,8 @@ public class UDPWorker extends Thread{
             InetAddress address = packet.getAddress();
             int port = packet.getPort();
             packet = new DatagramPacket(buf, buf.length, address, port);
+
+            // RECEBEU FILE
             String received = new String(packet.getData(), 0, packet.getLength());
 
             if(received.equals("end")){
