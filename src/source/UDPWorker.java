@@ -23,12 +23,12 @@ public class UDPWorker extends Thread implements Serializable{
     public InetAddress ip;
     public Map<Integer,Chunk> conteudo;
     public byte[] sending=null;
-    public  DatagramSocket socket;
+ //   public  DatagramSocket socket;
     public Integer info2;
     public Boolean wait=true;
     public UDPWorker(String ficheiro,DatagramSocket socket){
         this.ficheiro=ficheiro;
-this.socket = socket;
+//this.socket = socket;
     }
 
 
@@ -41,7 +41,12 @@ this.socket = socket;
     }
 
     public void run(){
-
+        DatagramSocket socket = null;
+        try {
+            socket = new DatagramSocket(5000);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
 
 
         conteudo = new TreeMap<Integer, Chunk>();
@@ -69,18 +74,21 @@ this.socket = socket;
                     DatagramPacket areceber = null;
 
                         byte[] areceive = new byte[65407];
+
                         areceber = new DatagramPacket(areceive, areceive.length);
 
                     try {
                         socket.receive(areceber);
-                        String msg = new String(areceber.getData(), areceber.getOffset(), areceber.getLength());
 
+                        String msg = new String(areceber.getData(), areceber.getOffset(), areceber.getLength());
+                        System.out.println("devia ser int "+msg);
                         info2= Integer.parseInt(msg);
 
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                     informa = false;
                 }
                 DatagramPacket chunkpacket = null;
@@ -160,7 +168,7 @@ System.out.println("chegaram estes chunks "+conteudo.size());
 
 
 
-
+socket.close();
 
         }
 

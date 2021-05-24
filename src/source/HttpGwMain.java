@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 public class HttpGwMain {
     static final int MAX_T = 10;
-
+  public   HTTPGw main_server = new HTTPGw();
    public DatagramSocket dserver;
     public static void main (String[] args) throws IOException  {
         HTTPGw main_server = new HTTPGw();
@@ -31,7 +31,7 @@ public class HttpGwMain {
          ServerSocket server = new ServerSocket(Constantes.TCPPort);
 
             // Socket UDP
-            DatagramSocket dsocket = new DatagramSocket(5000);
+         //   DatagramSocket dsocket = new DatagramSocket(5000);
 
             // Main Server
             main_server.setIp(ip);
@@ -51,7 +51,7 @@ public class HttpGwMain {
                     main_server.setTCP(tcp);
 
                     //UDP
-                    main_server.setDataSocket(dsocket);
+                 //   main_server.setDataSocket(dsocket);
 
                     // Start do server
                     main_server.run();
