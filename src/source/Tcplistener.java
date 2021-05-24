@@ -10,7 +10,7 @@ public class Tcplistener extends Thread {
     static String docroot = ".";
     public TCPCon tcp;
     public String ficheiro;
-    public byte[] sending = new byte[100000];
+    public byte[] sending = null;
     public Tcplistener(Socket s, TCPCon tcpc) {
         this.socket = s;
         this.tcp = tcpc;
@@ -48,29 +48,42 @@ public class Tcplistener extends Thread {
                 } else if (file.indexOf("../") != -1) {
                     System.err.println("Exiting: \"../\" in filename not allowed");
                 } else {
+            //thread fica parada ate receber o ficheiro a enviar
+                        while(sending==null){
+                            Thread.sleep(1);
+                        }
+                        //envia ficheiro
+                    System.out.println("a enviar xD "+ sending.length);
+                       sendFile(os,sending);
 
-                    this.sendFile(os, sending);
-                    System.out.println(sending.length);
                     this.socket.close();
                 }
             }
-        } catch (IOException var7) {
-            System.err.println("Cannot accept connection");
+        } catch (IOException | InterruptedException var7) {
+            System.err.println("Cannot accept connection or wait");
         }
 
     }
 
     void sendFile(PrintStream os, byte[] theData) {
-       // System.err.println("Request for file \"" + docroot + file + "\"");
+
 
         try {
-            System.out.println(theData.length);
-            System.out.println(ficheiro);
+            String tipo= parseFicheiro(ficheiro);
             os.write("HTTP/1.1 200 OK\r\n".getBytes());
             os.write("Accept-Ranges: bytes\r\n".getBytes());
             os.write(("Content-Length: " + theData.length + "\r\n").getBytes());
-            //content type variation need !!!
-            os.write("Content-Type: text/plain; charset=utf-8\r\n".getBytes());
+            if(tipo.equals("txt")){
+                os.write("Content-Type: text/plain; charset=utf-8\r\n".getBytes());
+            }else if(tipo.equals("jpeg")){
+                os.write("Content-Type: image/jpeg; charset=utf-8\r\n".getBytes());
+            }else if(tipo.equals("mp4")){
+                os.write("Content-Type: video/mp4; charset=utf-8\r\n".getBytes());
+
+            }else{
+                os.write("Content-Type: audio/mpeg; charset=utf-8\r\n".getBytes());
+
+            }
             os.write(("Content-Disposition: attachment; filename=" + ficheiro).getBytes());
 
             os.write(("Content-Length:" + theData.length + "\r\n").getBytes());
@@ -91,8 +104,15 @@ public class Tcplistener extends Thread {
 
     }
 
-
-
+public String parseFicheiro(String ficheiro){
+        int i=0;
+        String newString=ficheiro;
+        while(newString.charAt(i)!='.'){
+newString= newString.substring(1);
+        }
+      newString= newString.substring(1);
+        return newString;
+    }
     public TCPCon getTcp() {
         return tcp;
     }

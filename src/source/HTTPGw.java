@@ -2,6 +2,7 @@ package source;
 
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -16,7 +17,7 @@ public class HTTPGw extends Thread {
     TCPCon tcpc;
     int servers_conectados;
     public Queue<FastFileSrv> poolServer;
-    public byte[] sending = new byte[100000];
+    public byte[] sending = new byte[65506];
 
     public HTTPGw() {
         this.running = true;
@@ -90,16 +91,34 @@ public class HTTPGw extends Thread {
 
     public void run() {
         try {
+            //thread que trabalha com o client
             Tcplistener tcp = new Tcplistener(this.serverSocket, tcpc);
             tcp.start();
-            System.out.println("dar upload a 2: "+ getf());
+            while(tcp.getFicheiro()==null){
+                Thread.sleep(1);
+            }
+            while(poolServer==null){
+                Thread.sleep(1);
+            }
+            System.out.println("dar upload a 2: "+ tcp.getFicheiro());
             System.out.println(poolServer.size());
-               FastFileSrv ffs = poolServer.remove();
+
+              // FastFileSrv ffs = poolServer.remove();
                incServers();
-            UDPWorker udp = new UDPWorker(tcp.getFicheiro(),ffs.getIpAdress(),dataSocket);
+               //thread que comunica com ffs
+
+
+            UDPWorker udp = new UDPWorker(tcp.getFicheiro(),dataSocket);
             udp.start();
-            sending= udp.getSending();
-            tcp.setSending(sending);
+
+            //espera pela receção e agrupamento
+            while(udp.getSending()==null){
+               Thread.sleep(1);
+            }
+            //envia para a thread que comunica com o client
+            tcp.setSending(udp.getSending());
+
+           this.serverSocket.close();
 
         } catch (Exception var2) {
             var2.printStackTrace();

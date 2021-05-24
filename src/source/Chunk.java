@@ -3,8 +3,10 @@ package source;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Arrays;
 
-public class Chunk {
+public class Chunk implements Serializable {
     // Id do chunk
     private int id;
 
@@ -14,15 +16,17 @@ public class Chunk {
     // Num de sequencia
     private int numSequence;
 
+    private String nome;
     // Payload
     private byte[] data;
 
     // Construtor
-    public Chunk(int id, int numSequence, boolean isLastPacket, byte[] data) {
+    public Chunk(int id, int numSequence, boolean isLastPacket, byte[] data,String nome) {
         this.id = id;
         this.isLastPacket = isLastPacket;
         this.numSequence = numSequence;
         this.data = data;
+        this.nome=nome;
     }
 
     public int getId() {
@@ -35,6 +39,30 @@ public class Chunk {
 
     public int getSequenceNum() {
         return this.numSequence;
+    }
+
+    public boolean isLastPacket() {
+        return isLastPacket;
+    }
+
+    public void setLastPacket(boolean lastPacket) {
+        isLastPacket = lastPacket;
+    }
+
+    public int getNumSequence() {
+        return numSequence;
+    }
+
+    public void setNumSequence(int numSequence) {
+        this.numSequence = numSequence;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public byte[] getData() {
@@ -56,4 +84,15 @@ public class Chunk {
         oos.flush();
         return bos.toByteArray();
     }
+
+    @Override
+    public String toString() {
+        return "Chunk{" +
+                "id=" + id +
+                ", isLastPacket=" + isLastPacket +
+                ", numSequence=" + numSequence +
+                ", data=" + Arrays.toString(data) +
+                '}';
+    }
+
 }

@@ -31,7 +31,7 @@ public class HttpGwMain {
             ServerSocket server = new ServerSocket(Constantes.TCPPort);
 
             // Socket UDP
-            DatagramSocket dServer = new DatagramSocket(Constantes.UDPPort);
+            DatagramSocket dsocket = new DatagramSocket(5000);
 
             // Main Server
             main_server.setIp(ip);
@@ -49,7 +49,7 @@ public class HttpGwMain {
                     main_server.setTCP(tcp);
 
                     //UDP
-                   // main_server.setDataSocket(dServer);
+                    main_server.setDataSocket(dsocket);
 
                     // Start do server
                     main_server.start();
@@ -61,6 +61,7 @@ public class HttpGwMain {
                     System.err.println("Cannot accept connection");
                 }
             }
+
         }
 
         // Secção FastFileServer
@@ -71,12 +72,16 @@ public class HttpGwMain {
                 System.out.println("Fast file server ");
 
                     try {
-                        FastFileSrv ffs = new FastFileSrv(args[1], args[2]);
-                        Queue<FastFileSrv> aux = main_server.getPoolServer();
-                        aux.add((FastFileSrv) ffs);
-                        main_server.setPoolServer(aux);
-                        System.out.println(main_server.getPoolServer().size());
-                        ffs.start();
+                        // cria thread ffs e adiciona a pool de servers disponiveis pool nao ta a funcionar
+                            FastFileSrv ffs = new FastFileSrv(args[1], args[2]);
+                            Queue<FastFileSrv> aux = main_server.getPoolServer();
+                            aux.add((FastFileSrv) ffs);
+                            main_server.setPoolServer(aux);
+                            System.out.println(main_server.getPoolServer().size());
+
+                                ffs.start();
+
+
                     } catch (IOException e) {
                         System.err.println("cannot start ffs");
                     }
