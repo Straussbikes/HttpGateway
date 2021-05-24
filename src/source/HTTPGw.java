@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class HTTPGw extends Thread {
     InetAddress ip;
@@ -65,7 +66,7 @@ public class HTTPGw extends Thread {
     public boolean isRunning() {
         return this.running;
     }
-
+public ReentrantLock lock=new ReentrantLock();
     //SETS
     public void setServerSocket(Socket serverSocket) {
         this.serverSocket = serverSocket;
@@ -91,7 +92,7 @@ public class HTTPGw extends Thread {
 
     public void run() {
 
-
+lock.lock();
             try {
 
                 //thread que trabalha com o client
@@ -135,7 +136,7 @@ public class HTTPGw extends Thread {
                 ServerShutdown();
             }
 
-
+lock.unlock();
 
     }
     public String getf(){

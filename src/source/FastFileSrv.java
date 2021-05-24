@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static source.FileSplit.listOfFilesToMerge;
 
@@ -54,7 +55,7 @@ public class FastFileSrv extends Thread {
     public void setBuf(byte[] buf) {
         this.buf = buf;
     }
-
+public ReentrantLock lock=new ReentrantLock();
     // Buffer
     private byte[] buf = new byte[65000];
 
@@ -65,9 +66,11 @@ public class FastFileSrv extends Thread {
 
     @Override
     public void run() {
+
         // Tem socket ligada ao server
         this.running = true;
 while(running) {
+    lock.lock();
     DatagramSocket socket = null;
     //connecta-se ao udpworker
     try {
@@ -177,6 +180,7 @@ while(running) {
 if(envio.size()==0) break;
     }
 socket.close();
+    lock.unlock();
 }
        // socket.close();
             }

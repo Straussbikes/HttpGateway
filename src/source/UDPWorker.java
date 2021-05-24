@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class UDPWorker extends Thread implements Serializable{
 
@@ -25,6 +26,7 @@ public class UDPWorker extends Thread implements Serializable{
     public byte[] sending=null;
  //   public  DatagramSocket socket;
     public Integer info2;
+    public ReentrantLock lock = new ReentrantLock();
     public Boolean wait=true;
     public UDPWorker(String ficheiro,DatagramSocket socket){
         this.ficheiro=ficheiro;
@@ -41,6 +43,7 @@ public class UDPWorker extends Thread implements Serializable{
     }
 
     public void run(){
+        lock.lock();
         DatagramSocket socket = null;
         try {
             socket = new DatagramSocket(5000);
@@ -169,7 +172,7 @@ System.out.println("chegaram estes chunks "+conteudo.size());
 
 
 socket.close();
-
+lock.unlock();
         }
 
     private byte[] bigIntToByteArray( final int i ) {
