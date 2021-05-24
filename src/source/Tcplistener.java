@@ -25,43 +25,46 @@ public class Tcplistener extends Thread {
     }
 
     public void run() {
-        try {
 
-            PrintStream os = new PrintStream(tcp.getOut());
-            BufferedReader is = new BufferedReader(new InputStreamReader(tcp.getIn()));
-            String get = is.readLine();
+    try {
 
-            StringTokenizer st = new StringTokenizer(get);
-            String method = st.nextToken();
-            if (!method.equals("GET")) {
-                System.err.println("Only HTTP \"GET\" implemented");
-            } else {
-                while((get = is.readLine()) != null && !get.trim().equals("")) {
-                }
+        PrintStream os = new PrintStream(tcp.getOut());
+        BufferedReader is = new BufferedReader(new InputStreamReader(tcp.getIn()));
+        String get = is.readLine();
 
-                String file = st.nextToken();
-                setFicheiro(file.substring(1));
-
-
-                if (file.charAt(0) != '/') {
-                    System.err.println("Exiting: Request filename must start with \"/\"");
-                } else if (file.indexOf("../") != -1) {
-                    System.err.println("Exiting: \"../\" in filename not allowed");
-                } else {
-            //thread fica parada ate receber o ficheiro a enviar
-                    //    while(sending==null){
-                    //       Thread.sleep(1);
-                    //    }
-                        //envia ficheiro
-                   // System.out.println("a enviar xD "+ sending.length);
-                  //     sendFile(os,sending);
-
-                 //   this.socket.close();
-                }
+        StringTokenizer st = new StringTokenizer(get);
+        String method = st.nextToken();
+        if (!method.equals("GET")) {
+            System.err.println("Only HTTP \"GET\" implemented");
+        } else {
+            while ((get = is.readLine()) != null && !get.trim().equals("")) {
             }
-        } catch (IOException var7) {
-            System.err.println("Cannot accept connection or wait");
+
+            String file = st.nextToken();
+            setFicheiro(file.substring(1));
+
+
+            if (file.charAt(0) != '/') {
+                System.err.println("Exiting: Request filename must start with \"/\"");
+            } else if (file.indexOf("../") != -1) {
+                System.err.println("Exiting: \"../\" in filename not allowed");
+            } else {
+                //thread fica parada ate receber o ficheiro a enviar
+                //    while(sending==null){
+                //       Thread.sleep(1);
+                //    }
+                //envia ficheiro
+                // System.out.println("a enviar xD "+ sending.length);
+                //     sendFile(os,sending);
+
+                //   this.socket.close();
+            }
         }
+
+    } catch (IOException var7) {
+        System.err.println("Cannot accept connection or wait");
+    }
+
 
     }
 
@@ -82,12 +85,12 @@ public class Tcplistener extends Thread {
             if(tipo.equals("txt")){
                 os.write("Content-Type: text/plain; charset=utf-8\r\n".getBytes());
             }else if(tipo.equals("JPEG") || tipo.equals("jpeg") || tipo.equals("JPG") || tipo.equals("jpg")){
-                os.write("Content-Type: image/jpeg; charset=utf-8\r\n".getBytes());
+                os.write("Content-Type: image/jpeg;\r\n".getBytes());
             }else if(tipo.equals("mp4")){
-                os.write("Content-Type: video/mp4; charset=utf-8\r\n".getBytes());
+                os.write("Content-Type: video/mp4; \r\n".getBytes());
 
             }else{
-                os.write("Content-Type: audio/mpeg; charset=utf-8\r\n".getBytes());
+                os.write("Content-Type: audio/mpeg; \r\n".getBytes());
 
             }
             os.write(("Content-Disposition: attachment; filename=" + ficheiro).getBytes());

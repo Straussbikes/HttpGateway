@@ -67,113 +67,113 @@ public class FastFileSrv extends Thread {
     public void run() {
         // Tem socket ligada ao server
         this.running = true;
-        DatagramSocket socket = null;
-        //connecta-se ao udpworker
-        try {
-            System.out.println("ola " +ipAdress);
-            socket = new DatagramSocket(Constantes.UDPPort);
+while(running) {
+    DatagramSocket socket = null;
+    //connecta-se ao udpworker
+    try {
+        System.out.println("ola " + ipAdress);
+        socket = new DatagramSocket(Constantes.UDPPort);
 
-        } catch (SocketException e) {
-            e.printStackTrace();
+    } catch (SocketException e) {
+        e.printStackTrace();
+    }
+
+    // Packet
+    DatagramPacket packet = null;
+
+
+    packet = new DatagramPacket(buf, buf.length);
+
+
+    // Fica a escuta de pedidos primeiro packet contem info sobre ficheiro
+    try {
+        socket.receive(packet);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    String s = new String(packet.getData());
+    System.out.println("fast file server a preparar " + s + "\n");
+    InetAddress ip_add1 = packet.getAddress();
+    int port = packet.getPort();
+    // Processa informação do pedido
+    // Pega no file
+    FileSplit fs = new FileSplit();
+    // Dá split do file
+    String ret = "";
+    try {
+        System.out.println(s);
+
+        int i = 0;
+        for (i = 0; i < s.length(); i++) {
+            if (Character.isLetter(s.charAt(i)) || s.charAt(i) == '.' || Character.isDigit(s.charAt(i))) {
+                char tmp = s.charAt(i);
+                ret = ret + tmp;
+            } else break;
         }
 
-            // Packet
-            DatagramPacket packet = null;
+        System.out.println("lol wtf :" + s.length());
 
+        System.out.println("real size " + ret.length());
+        //substituir test.mp4 por s
+        fs.splitFile(new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway2\\src\\source\\" + ret));
 
-            packet = new DatagramPacket(buf, buf.length);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }                                                                                            //substituir test.mp4 por s
+    List<File> lista = listOfFilesToMerge(new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway2\\src\\source\\" + ret + ".001"));
+    int i = 0;
+    Integer info1 = lista.size();
+    System.out.println("size lista: " + lista.size());
 
+    //envia a informaçao com o numero de chunks do ficheiro...
+    try {
+        String ss = info1.toString();
 
+        DatagramPacket infos = new DatagramPacket(ss.getBytes(), ss.getBytes().length, ip_add1, port);
+        socket.send(infos);
+    } catch (UnknownHostException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
 
-        // Fica a escuta de pedidos primeiro packet contem info sobre ficheiro
-            try {
-                socket.receive(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String s = new String(packet.getData());
-            System.out.println("fast file server a preparar " +s+"\n");
-            InetAddress ip_add1=packet.getAddress();
-            int port = packet.getPort();
-            // Processa informação do pedido
-            // Pega no file
-            FileSplit fs = new FileSplit();
-            // Dá split do file
-        String ret="";
-            try {
-                System.out.println(s);
-
-                int i=0;
-                for( i=0 ;i<s.length();i++){
-                    if(Character.isLetter(s.charAt(i)) || s.charAt(i)=='.' || Character.isDigit(s.charAt(i))){
-                        char tmp= s.charAt(i);
-                        ret=ret+tmp;
-                    }else break;
-                }
-
-                System.out.println("lol wtf :"+s.length());
-
-                System.out.println("real size "+ret.length());
-                //substituir test.mp4 por s
-                fs.splitFile(new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\"+ret));
-
-            } catch (IOException e) {
-               e.printStackTrace();
-             }                                                                                            //substituir test.mp4 por s
-            List<File> lista = listOfFilesToMerge(new File ("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\"+ret+".001"));
-            int i=0;
-            Integer info1= lista.size();
-            System.out.println("size lista: "+lista.size());
-
-                //envia a informaçao com o numero de chunks do ficheiro...
-            try {
-                String ss = info1.toString();
-
-                DatagramPacket infos = new DatagramPacket(ss.getBytes(),ss.getBytes().length,ip_add1,port);
-                socket.send(infos);
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //cria um map com os chunks ordenados
-            int tam= lista.size();
-            Map<Integer,Chunk> envio= new TreeMap<Integer,Chunk>();
-            for(File f: lista){
-                System.out.println(f.getName());
-                    Chunk adi = new Chunk(i,i,islast(i,tam),readFile(f),f.getName());
-                    envio.put(adi.getSequenceNum(),adi);
-                    i++;
-            }
-            // Envia os respetivos chunks
+    //cria um map com os chunks ordenados
+    int tam = lista.size();
+    Map<Integer, Chunk> envio = new TreeMap<Integer, Chunk>();
+    for (File f : lista) {
+        System.out.println(f.getName());
+        Chunk adi = new Chunk(i, i, islast(i, tam), readFile(f), f.getName());
+        envio.put(adi.getSequenceNum(), adi);
+        i++;
+    }
+    // Envia os respetivos chunks
 //envia os chunks e espera respostas de chunks recebidos, continua a enviar ate o map ficar vazio...  -> simulaçao de tcp
-            while(manda) {
-                for (Map.Entry<Integer, Chunk> entry : envio.entrySet()) {
-                    try {
-                        DatagramPacket chunksz = new DatagramPacket(Objects.requireNonNull(Serializer.serialize(entry.getValue())), Objects.requireNonNull(Serializer.serialize(entry.getValue())).length,ip_add1,port );
-                        socket.send(chunksz);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        socket.send(packet);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                byte[] retirar = new byte[65407];
-                //recebe packet com numero de sequencia do packet recebido do outro lado
-               DatagramPacket retira = new DatagramPacket(retirar, retirar.length);
-                try {
-                    socket.receive(retira);
-                    String msg = new String(retira.getData(),retira.getOffset(), retira.getLength());
-                  Integer  retiraint= Integer.parseInt(msg);
-                  System.out.println("reposta do UDP: chegou "+retiraint);
-                    envio.remove(retiraint);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    while (manda) {
+        for (Map.Entry<Integer, Chunk> entry : envio.entrySet()) {
+            try {
+                DatagramPacket chunksz = new DatagramPacket(Objects.requireNonNull(Serializer.serialize(entry.getValue())), Objects.requireNonNull(Serializer.serialize(entry.getValue())).length, ip_add1, port);
+                socket.send(chunksz);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                socket.send(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        byte[] retirar = new byte[65407];
+        //recebe packet com numero de sequencia do packet recebido do outro lado
+        DatagramPacket retira = new DatagramPacket(retirar, retirar.length);
+        try {
+            socket.receive(retira);
+            String msg = new String(retira.getData(), retira.getOffset(), retira.getLength());
+            Integer retiraint = Integer.parseInt(msg);
+            System.out.println("reposta do UDP: chegou " + retiraint);
+            envio.remove(retiraint);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
                 /*
                 DatagramPacket packet2= null;
 
@@ -190,11 +190,11 @@ public class FastFileSrv extends Thread {
                     e.printStackTrace();
                 }
                 */
-
-            }
-
-
-        socket.close();
+if(envio.size()==0) break;
+    }
+socket.close();
+}
+       // socket.close();
             }
 
     private static byte[] readFile(File file) {

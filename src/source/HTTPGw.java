@@ -90,46 +90,52 @@ public class HTTPGw extends Thread {
     }
 
     public void run() {
-        try {
-            //thread que trabalha com o client
-            Tcplistener tcp = new Tcplistener(this.serverSocket, tcpc);
-            tcp.start();
-            while(tcp.getFicheiro()==null){
-                Thread.sleep(1);
+
+
+            try {
+
+                //thread que trabalha com o client
+                Tcplistener tcp = new Tcplistener(this.serverSocket, tcpc);
+                tcp.start();
+
+
+                while (tcp.getFicheiro() == null) {
+                    Thread.sleep(1);
+                }
+                while (poolServer == null) {
+                    Thread.sleep(1);
+                }
+                System.out.println("dar upload a 2: " + tcp.getFicheiro());
+                System.out.println(poolServer.size());
+
+                // FastFileSrv ffs = poolServer.remove();
+                incServers();
+                //thread que comunica com ffs
+
+
+                UDPWorker udp = new UDPWorker(tcp.getFicheiro(), dataSocket);
+                udp.start();
+
+                //espera pela receção e agrupamento
+                while (udp.getSending() == null || udp.getWait()) {
+                    System.out.println("sleep time");
+                    Thread.sleep(1);
+                }
+                //envia para a thread que comunica com o client
+                tcp.setSending(udp.getSending());
+                System.out.println("Sendint length " + tcp.getSending().length);
+                PrintStream os = new PrintStream(tcpc.getOut());
+                tcp.sendFile(os, tcp.getSending());
+
+
+                tcp.setFicheiro(null);
+
+            } catch (Exception var2) {
+                var2.printStackTrace();
+                ServerShutdown();
             }
-            while(poolServer==null){
-                Thread.sleep(1);
-            }
-            System.out.println("dar upload a 2: "+ tcp.getFicheiro());
-            System.out.println(poolServer.size());
-
-              // FastFileSrv ffs = poolServer.remove();
-               incServers();
-               //thread que comunica com ffs
 
 
-            UDPWorker udp = new UDPWorker(tcp.getFicheiro(),dataSocket);
-            udp.start();
-
-            //espera pela receção e agrupamento
-            while(udp.getSending()==null || udp.getWait()){
-                System.out.println("sleep time");
-               Thread.sleep(1);
-            }
-            //envia para a thread que comunica com o client
-            tcp.setSending(udp.getSending());
-            System.out.println("Sendint length "+tcp.getSending().length);
-            PrintStream os = new PrintStream(tcpc.getOut());
-            tcp.sendFile(os,tcp.getSending());
-
-
-           this.serverSocket.close();
-           tcp.setFicheiro(null);
-
-        } catch (Exception var2) {
-            var2.printStackTrace();
-            ServerShutdown();
-        }
 
     }
     public String getf(){

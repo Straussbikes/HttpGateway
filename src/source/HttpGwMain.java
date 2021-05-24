@@ -28,7 +28,7 @@ public class HttpGwMain {
             InetAddress ip = InetAddress.getLocalHost();
 
             // Socket TCP
-            ServerSocket server = new ServerSocket(Constantes.TCPPort);
+         ServerSocket server = new ServerSocket(Constantes.TCPPort);
 
             // Socket UDP
             DatagramSocket dsocket = new DatagramSocket(5000);
@@ -38,6 +38,8 @@ public class HttpGwMain {
 
             // Rodar server
             while(true) {
+
+
                 try {
                     System.out.println("Waiting for connection on port " + Constantes.TCPPort);
 
@@ -52,15 +54,20 @@ public class HttpGwMain {
                     main_server.setDataSocket(dsocket);
 
                     // Start do server
-                    main_server.start();
+                    main_server.run();
 
                     // Print de aviso
                     System.out.println("Ativo em " + main_server.getIp() + " porta " + Constantes.UDPPort);
+
+
+
                 }
                 catch(IOException e) {
                     System.err.println("Cannot accept connection");
                 }
+
             }
+
 
         }
 
