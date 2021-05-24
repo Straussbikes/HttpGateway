@@ -141,7 +141,7 @@ System.out.println("chegaram estes chunks "+conteudo.size());
 
                 System.out.println("indice = "+ entry.getKey());
                     //files.add(entry.getKey(), (File) Serializer.deserialize(entry.getValue().getData()));
-                    File file = new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway2\\src\\source\\download\\"+entry.getValue().getNome());
+                    File file = new File("src\\download\\"+entry.getValue().getNome());
                     files.add(entry.getKey(),file);
                     BufferedOutputStream bos = null;
                     try {
@@ -157,7 +157,7 @@ System.out.println("chegaram estes chunks "+conteudo.size());
                     }
 
                 }
-                File merged = new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway2\\src\\source\\download\\" + ficheiro);
+                File merged = new File("src\\download\\" + ficheiro);
                 try {
 
 
