@@ -67,20 +67,23 @@ public ReentrantLock lock=new ReentrantLock();
     @Override
     public void run() {
 
+        int udpport = 80;
         // Tem socket ligada ao server
         this.running = true;
 while(running) {
     lock.lock();
     DatagramSocket socket = null;
+    boolean conexao = false;
     //connecta-se ao udpworker
-    try {
-        System.out.println("ola " + ipAdress);
-        socket = new DatagramSocket(Constantes.UDPPort);
-
-    } catch (SocketException e) {
-        e.printStackTrace();
+    while(!conexao) {
+        try {
+            System.out.println("ola " + ipAdress);
+            socket = new DatagramSocket(udpport);
+            conexao = true;
+        } catch (SocketException e) {
+            udpport++;
+        }
     }
-
     // Packet
     DatagramPacket packet = null;
 
