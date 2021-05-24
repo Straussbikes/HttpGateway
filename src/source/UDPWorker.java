@@ -25,6 +25,7 @@ public class UDPWorker extends Thread implements Serializable{
     public byte[] sending=null;
     public  DatagramSocket socket;
     public Integer info2;
+    public Boolean wait=true;
     public UDPWorker(String ficheiro,DatagramSocket socket){
         this.ficheiro=ficheiro;
 this.socket = socket;
@@ -41,7 +42,7 @@ this.socket = socket;
 
     public void run(){
 
-System.out.println("from udp "+ this.ficheiro);
+
 
         conteudo = new TreeMap<Integer, Chunk>();
             running = true;
@@ -73,7 +74,7 @@ System.out.println("from udp "+ this.ficheiro);
                     try {
                         socket.receive(areceber);
                         String msg = new String(areceber.getData(), areceber.getOffset(), areceber.getLength());
-                        System.out.println("pelo menos xD"+ msg);
+
                         info2= Integer.parseInt(msg);
 
 
@@ -98,15 +99,16 @@ System.out.println("from udp "+ this.ficheiro);
                          DatagramPacket resposta = new DatagramPacket(rrs.getBytes(), 0,rrs.getBytes().length,InetAddress.getLocalHost(),Constantes.UDPPort);
                          socket.send(resposta);
                          conteudo.put(chunk.getSequenceNum(), chunk);
-                         System.out.println("Chunk number : " + chunk.getSequenceNum());
+
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
                 }
-        System.out.println("olaaaaaa: "+conteudo.size());
-
+        wait=false;
+System.out.println("chegaram estes chunks "+conteudo.size());
+/*
                 buf = null;
                 String stop= "Stop";
         DatagramPacket stops = null;
@@ -122,7 +124,7 @@ System.out.println("from udp "+ this.ficheiro);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+*/
                 List<File> files = new ArrayList<File>(info2);
                 for (Map.Entry<Integer, Chunk> entry : conteudo.entrySet()) {
 
@@ -147,11 +149,12 @@ System.out.println("from udp "+ this.ficheiro);
                 File merged = new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\download\\" + ficheiro);
                 try {
 
-                        System.out.println("files to merge :" + files.size());
+
                         FileSplit.mergeFiles(files, merged);
+                        Thread.sleep(1000);
                         sending = readFile(merged);
 
-                    } catch(IOException e){
+                    } catch(IOException | InterruptedException e){
                         e.printStackTrace();
                     }
 
@@ -190,4 +193,7 @@ System.out.println("from udp "+ this.ficheiro);
         return bArray;
     }
 
+    public boolean getWait() {
+       return this.wait;
+    }
 }

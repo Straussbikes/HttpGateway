@@ -112,13 +112,19 @@ public class HTTPGw extends Thread {
             udp.start();
 
             //espera pela receção e agrupamento
-            while(udp.getSending()==null){
+            while(udp.getSending()==null || udp.getWait()){
+                System.out.println("sleep time");
                Thread.sleep(1);
             }
             //envia para a thread que comunica com o client
             tcp.setSending(udp.getSending());
+            System.out.println("Sendint length "+tcp.getSending().length);
+            PrintStream os = new PrintStream(tcpc.getOut());
+            tcp.sendFile(os,tcp.getSending());
+
 
            this.serverSocket.close();
+           tcp.setFicheiro(null);
 
         } catch (Exception var2) {
             var2.printStackTrace();

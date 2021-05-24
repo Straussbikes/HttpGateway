@@ -49,22 +49,28 @@ public class Tcplistener extends Thread {
                     System.err.println("Exiting: \"../\" in filename not allowed");
                 } else {
             //thread fica parada ate receber o ficheiro a enviar
-                        while(sending==null){
-                            Thread.sleep(1);
-                        }
+                    //    while(sending==null){
+                    //       Thread.sleep(1);
+                    //    }
                         //envia ficheiro
-                    System.out.println("a enviar xD "+ sending.length);
-                       sendFile(os,sending);
+                   // System.out.println("a enviar xD "+ sending.length);
+                  //     sendFile(os,sending);
 
-                    this.socket.close();
+                 //   this.socket.close();
                 }
             }
-        } catch (IOException | InterruptedException var7) {
+        } catch (IOException var7) {
             System.err.println("Cannot accept connection or wait");
         }
 
     }
 
+    /**
+     * Sends an array of bytes through HTTP
+     *
+     * @param , a byte array that represents a serialized Object, and Stream where bytes go through
+     *
+     */
     void sendFile(PrintStream os, byte[] theData) {
 
 
@@ -75,7 +81,7 @@ public class Tcplistener extends Thread {
             os.write(("Content-Length: " + theData.length + "\r\n").getBytes());
             if(tipo.equals("txt")){
                 os.write("Content-Type: text/plain; charset=utf-8\r\n".getBytes());
-            }else if(tipo.equals("jpeg")){
+            }else if(tipo.equals("JPEG") || tipo.equals("jpeg") || tipo.equals("JPG") || tipo.equals("jpg")){
                 os.write("Content-Type: image/jpeg; charset=utf-8\r\n".getBytes());
             }else if(tipo.equals("mp4")){
                 os.write("Content-Type: video/mp4; charset=utf-8\r\n".getBytes());
@@ -104,6 +110,13 @@ public class Tcplistener extends Thread {
 
     }
 
+    /**
+     * Sends an array of bytes through HTTP
+     *
+     * @param  , a string that represents the filename
+     * @return String, the type of the file (ex:mp4, txt...)
+     *
+     */
 public String parseFicheiro(String ficheiro){
         int i=0;
         String newString=ficheiro;

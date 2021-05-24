@@ -99,15 +99,28 @@ public class FastFileSrv extends Thread {
             // Pega no file
             FileSplit fs = new FileSplit();
             // Dá split do file
+        String ret="";
             try {
                 System.out.println(s);
+
+                int i=0;
+                for( i=0 ;i<s.length();i++){
+                    if(Character.isLetter(s.charAt(i)) || s.charAt(i)=='.' || Character.isDigit(s.charAt(i))){
+                        char tmp= s.charAt(i);
+                        ret=ret+tmp;
+                    }else break;
+                }
+
+                System.out.println("lol wtf :"+s.length());
+
+                System.out.println("real size "+ret.length());
                 //substituir test.mp4 por s
-                fs.splitFile(new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\test.mp4"));
+                fs.splitFile(new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\"+ret));
 
             } catch (IOException e) {
                e.printStackTrace();
              }                                                                                            //substituir test.mp4 por s
-            List<File> lista = listOfFilesToMerge(new File ("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\test.mp4.001"));
+            List<File> lista = listOfFilesToMerge(new File ("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway\\src\\source\\"+ret+".001"));
             int i=0;
             Integer info1= lista.size();
             System.out.println("size lista: "+lista.size());
@@ -156,10 +169,12 @@ public class FastFileSrv extends Thread {
                     socket.receive(retira);
                     String msg = new String(retira.getData(),retira.getOffset(), retira.getLength());
                   Integer  retiraint= Integer.parseInt(msg);
+                  System.out.println("reposta do UDP: chegou "+retiraint);
                     envio.remove(retiraint);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                /*
                 DatagramPacket packet2= null;
 
                     packet2 = new DatagramPacket(buf,buf.length);
@@ -174,6 +189,8 @@ public class FastFileSrv extends Thread {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                */
+
             }
 
 
