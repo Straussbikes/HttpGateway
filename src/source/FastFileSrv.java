@@ -56,9 +56,9 @@ public class FastFileSrv extends Thread {
     }
 
     // Buffer
-    private byte[] buf = new byte[65506];
+    private byte[] buf = new byte[65000];
 
-    public FastFileSrv(String ip, String port) throws SocketException, UnknownHostException {
+    public FastFileSrv(String ip) throws UnknownHostException {
         this.ipAdress =InetAddress.getByName(ip);
 
     }
@@ -115,12 +115,12 @@ while(running) {
 
         System.out.println("real size " + ret.length());
         //substituir test.mp4 por s
-        fs.splitFile(new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway2\\src\\source\\" + ret));
+        fs.splitFile(new File("src\\source\\" + ret));
 
     } catch (IOException e) {
         e.printStackTrace();
     }                                                                                            //substituir test.mp4 por s
-    List<File> lista = listOfFilesToMerge(new File("C:\\Users\\StraussBikes\\Desktop\\3ano2sem\\CC\\HttpGateway2\\src\\source\\" + ret + ".001"));
+    List<File> lista = listOfFilesToMerge(new File("src\\source\\" + ret + ".001"));
     int i = 0;
     Integer info1 = lista.size();
     System.out.println("size lista: " + lista.size());
@@ -174,22 +174,6 @@ while(running) {
         } catch (IOException e) {
             e.printStackTrace();
         }
-                /*
-                DatagramPacket packet2= null;
-
-                    packet2 = new DatagramPacket(buf,buf.length);
-
-                try {
-                    // recebe informaçap para parar loop
-                    socket.receive(packet2);
-                    String rec= buf.toString();
-                    if(rec.equals("Stop"));
-                    manda=false;
-                   // running=false;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                */
 if(envio.size()==0) break;
     }
 socket.close();
@@ -226,7 +210,4 @@ socket.close();
             return true;
         }else return false;
     }
-
-
-
 }

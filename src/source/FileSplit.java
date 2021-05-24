@@ -10,7 +10,7 @@ class FileSplit {
     public static void splitFile(File f) throws IOException {
         int partCounter = 1;//I like to name parts from 001, 002, 003, ...
 
-        int sizeOfFiles =60000;// 1MB
+        int sizeOfFiles = 60000;// 1MB
 
         byte[] buffer = new byte[sizeOfFiles];
 

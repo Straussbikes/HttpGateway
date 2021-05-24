@@ -80,7 +80,7 @@ public class HttpGwMain {
 
                     try {
                         // cria thread ffs e adiciona a pool de servers disponiveis pool nao ta a funcionar
-                            FastFileSrv ffs = new FastFileSrv(args[1], args[2]);
+                            FastFileSrv ffs = new FastFileSrv(args[1]);
                             Queue<FastFileSrv> aux = main_server.getPoolServer();
                             aux.add((FastFileSrv) ffs);
                             main_server.setPoolServer(aux);
