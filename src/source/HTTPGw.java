@@ -128,7 +128,6 @@ lock.lock();
                 PrintStream os = new PrintStream(tcpc.getOut());
                 tcp.sendFile(os, tcp.getSending());
 
-
                 tcp.setFicheiro(null);
 
             } catch (Exception var2) {

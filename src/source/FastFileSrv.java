@@ -84,6 +84,17 @@ while(running) {
             udpport++;
         }
     }
+    // packet to send
+
+    byte[] bufip = socket.getLocalAddress().getHostName().getBytes(StandardCharsets.UTF_8);
+
+    DatagramPacket send = new DatagramPacket(bufip, bufip.length);
+    try {
+        socket.send(send);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
     // Packet
     DatagramPacket packet = null;
 
@@ -148,7 +159,7 @@ while(running) {
     Map<Integer, Chunk> envio = new TreeMap<Integer, Chunk>();
     for (File f : lista) {
         System.out.println(f.getName());
-        Chunk adi = new Chunk(i, i, islast(i, tam), readFile(f), f.getName());
+        Chunk adi = new Chunk(i, i, socket.getInetAddress(), islast(i, tam), readFile(f), f.getName());
         envio.put(adi.getSequenceNum(), adi);
         i++;
     }

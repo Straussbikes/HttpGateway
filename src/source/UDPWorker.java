@@ -28,6 +28,7 @@ public class UDPWorker extends Thread implements Serializable{
     public Integer info2;
     public ReentrantLock lock = new ReentrantLock();
     public Boolean wait=true;
+
     public UDPWorker(String ficheiro,DatagramSocket socket){
         this.ficheiro=ficheiro;
 //this.socket = socket;

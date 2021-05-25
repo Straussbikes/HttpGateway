@@ -6,7 +6,6 @@ import java.util.Queue;
 public class FastFileServerMain {
 
     public static void main(String[] args) throws IOException {
-        HTTPGw main_server = new HTTPGw();
         if (args.length == 0) {
             throw new IllegalArgumentException("insuficient arguments");
         }
@@ -20,11 +19,6 @@ public class FastFileServerMain {
                 try {
                     // cria thread ffs e adiciona a pool de servers disponiveis pool nao ta a funcionar
                     FastFileSrv ffs = new FastFileSrv(args[1]);
-                    Queue<FastFileSrv> aux = main_server.getPoolServer();
-                    aux.add((FastFileSrv) ffs);
-                    main_server.setPoolServer(aux);
-                    System.out.println(main_server.getPoolServer().size());
-
                     ffs.start();
 
                 } catch (IOException e) {

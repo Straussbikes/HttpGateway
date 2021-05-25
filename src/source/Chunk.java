@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.util.Arrays;
 
 public class Chunk implements Serializable {
@@ -16,15 +17,18 @@ public class Chunk implements Serializable {
     // Num de sequencia
     private int numSequence;
 
+    private InetAddress ip;
+
     private String nome;
     // Payload
     private byte[] data;
 
     // Construtor
-    public Chunk(int id, int numSequence, boolean isLastPacket, byte[] data,String nome) {
+    public Chunk(int id, int numSequence, InetAddress ip, boolean isLastPacket, byte[] data,String nome) {
         this.id = id;
         this.isLastPacket = isLastPacket;
         this.numSequence = numSequence;
+        this.ip = ip;
         this.data = data;
         this.nome=nome;
     }
@@ -55,6 +59,10 @@ public class Chunk implements Serializable {
 
     public void setNumSequence(int numSequence) {
         this.numSequence = numSequence;
+    }
+
+    public InetAddress getIp() {
+        return ip;
     }
 
     public String getNome() {
