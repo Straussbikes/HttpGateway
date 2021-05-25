@@ -77,8 +77,8 @@ while(running) {
     //connecta-se ao udpworker
     while(!conexao) {
         try {
-            System.out.println("ola " + ipAdress);
             socket = new DatagramSocket(udpport);
+            System.out.println("ola " + ipAdress);
             conexao = true;
         } catch (SocketException e) {
             udpport++;
